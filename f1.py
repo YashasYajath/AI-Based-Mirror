@@ -1,12 +1,10 @@
 import cv2
 import openai
 import base64
-
-# ✅ Function to capture an image from the webcam
 def capture_image():
     print("Starting webcam... Press 'c' to capture, 'q' to quit.")
 
-    cap = cv2.VideoCapture(1)  # Open webcam
+    cap = cv2.VideoCapture(1)
     if not cap.isOpened():
         print("ERROR: Could not open webcam.")
         return None
@@ -27,7 +25,7 @@ def capture_image():
             print(f"Image saved as '{image_path}'")
             cap.release()
             cv2.destroyAllWindows()
-            return image_path  # Return the image path
+            return image_path 
         elif key == ord('q'):
             print(" Quitting without capturing.")
             break
@@ -36,19 +34,17 @@ def capture_image():
     cv2.destroyAllWindows()
     return None
 
-# ✅ Function to encode the image in Base64
 def encode_image(image_path):
     with open(image_path, "rb") as image_file:
         return base64.b64encode(image_file.read()).decode("utf-8")
 
-# ✅ Function to send image to GPT-4-Vision
 def send_image_to_ai(image_path):
     API_KEY = "Api_Key"
 
     encoded_image = encode_image(image_path)
 
     response = openai.ChatCompletion.create(
-        model="gpt-4-turbo",  # ✅ Ensure you're using GPT-4-Vision
+        model="gpt-4-turbo", 
         messages=[
             {"role": "system", "content": "You are an AI fashion assistant."},
             {
@@ -59,22 +55,18 @@ def send_image_to_ai(image_path):
                 ]
             }
         ],
-        api_key=API_KEY  # Pass API Key
+        api_key=API_KEY
     )
 
     return response
 
-# ✅ Main function
 def main():
-    # Step 1: Capture an image from the webcam
     image_path = capture_image()
 
     if image_path:
-        # Step 2: Send the image to AI for outfit rating
         ai_response = send_image_to_ai(image_path)
 
         if ai_response:
-            # Step 3: Display the results
             print("\n AI Response:")
             print("Outfit Rating:", ai_response["choices"][0]["message"]["content"])
         else:
